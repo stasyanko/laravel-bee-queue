@@ -1,11 +1,29 @@
 {
     "name": "stasyanko/laravel-bee-queue",
+    "description": "Use bee-queue job queue from laravel.",
     "license": "MIT",
     "authors": [
         {
-            "name": "Stas Yankovskiy",
-            "email": ""
+            "name": "Stanislav Yankovskiy"
         }
     ],
-    "require": {}
+    "support": {
+        "issues": "https://github.com/stasyanko/laravel-bee-queue/issues",
+        "source": "https://github.com/stasyanko/laravel-bee-queue"
+    },
+    "require": {
+        "php": "^7.0.0"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "StasYanko\\LaravelBeeQueue\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "StasYanko\\LaravelBeeQueue\\Tests\\": "tests/"
+        }
+    }
 }
