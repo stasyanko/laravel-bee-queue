@@ -23,6 +23,6 @@ class LaravelBeeQueueServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        // 
     }
 }

@@ -12,5 +12,5 @@ interface LaravelBeeQueueInterface
      *
      * @return void
      */
-    public function createJob(string $data, array $options);
+    public function createJob(string $data, array $settings);
 }
