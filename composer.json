@@ -18,12 +18,12 @@
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
-            "StasYanko\\LaravelBeeQueue\\": "src/"
+            "Stasyanko\\LaravelBeeQueue\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "StasYanko\\LaravelBeeQueue\\Tests\\": "tests/"
+            "Stasyanko\\LaravelBeeQueue\\Tests\\": "tests/"
         }
     }
 }
