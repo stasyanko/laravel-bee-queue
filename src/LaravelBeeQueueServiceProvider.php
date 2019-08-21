@@ -3,6 +3,7 @@
 namespace Stasyanko\LaravelBeeQueue;
 
 use Illuminate\Support\ServiceProvider;
+use Predis\Client;
 
 class LaravelBeeQueueServiceProvider extends ServiceProvider
 {
@@ -13,7 +14,9 @@ class LaravelBeeQueueServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind(Client::class, function () {
+            return new Client();
+        });
     }
 
     /**
@@ -23,6 +26,6 @@ class LaravelBeeQueueServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // 
+        //
     }
 }

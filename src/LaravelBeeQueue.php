@@ -2,6 +2,9 @@
 
 namespace Stasyanko\LaravelBeeQueue;
 
+use Stasyanko\LaravelBeeQueue\Lua\AddJob;
+use Predis\Client;
+
 class LaravelBeeQueue implements LaravelBeeQueueInterface
 {
     private $queueName;
@@ -39,15 +42,38 @@ class LaravelBeeQueue implements LaravelBeeQueueInterface
 
         $this->settings = [
             'redis' => $settings['redis'] ?? $this->defaults['redis'],
-            'quitCommandClient' => $settings['quitCommandClient'] ?? false,
+            'quitCommandClient' => true,
             'keyPrefix' => $settings['prefix'] ?? $this->defaults['prefix'] . ':' . $queueName . ':',
         ];
     }
 
     public function createJob(string $data, array $settings = [])
     {
-        //TODO: complete function
-        dd($this->settings);
+        $client = new Client();
+        $script = <<<'LUA'
+--[[
+key 1 -> bq:name:id (job ID counter)
+key 2 -> bq:name:jobs
+key 3 -> bq:name:waiting
+arg 1 -> job id
+arg 2 -> job data
+]]
+
+local jobId = ARGV[1]
+if jobId == "" then
+    jobId = "" .. redis.call("incr", KEYS[1])
+end
+if redis.call("hexists", KEYS[2], jobId) == 1 then return nil end
+redis.call("hset", KEYS[2], jobId, ARGV[2])
+redis.call("lpush", KEYS[3], jobId)
+
+return jobId
+LUA;
+        $addJobObj = new AddJob();
+        // $client->getProfile()->defineCommand('addJob', 'AddJob');
+        $response = $client->eval($script, 3, 1.2, 1.5, 1.1, 1, '{"1":1}');
+
+        dd($response);
     }
 
     private function toKey($str)
