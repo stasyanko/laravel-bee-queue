@@ -1,0 +1,11 @@
+{
+    "name": "stasyanko/laravel-bee-queue",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Stas Yankovskiy",
+            "email": ""
+        }
+    ],
+    "require": {}
+}
