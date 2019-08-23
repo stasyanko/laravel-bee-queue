@@ -9,3 +9,10 @@ The package allows to create jobs for bee-queue from laravel with two lines of c
     
 
 The package is under development now and **IS NOT READY** for production!
+
+####  TODO:
+
+- write tests
+- complete TODOs in the code
+- publish to packagist
+
