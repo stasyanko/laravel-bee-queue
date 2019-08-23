@@ -57,15 +57,16 @@ class LaravelBeeQueue implements LaravelBeeQueueInterface
     /**
      * createJob
      *
-     * @param  string $data json data 
+     * @param  array $data
      * @param  array $options
      *
      * @return void
      */
-    public function createJob(string $data, array $options = [])
+    public function createJob(array $data, array $options = [])
     {
         $client = new Client();
-        $script = <<<'LUA'
+        //TODO: move to external method or class
+        $addJobLuaScript = <<<'LUA'
 --[[
 key 1 -> bq:name:id (job ID counter)
 key 2 -> bq:name:jobs
@@ -85,7 +86,13 @@ redis.call("lpush", KEYS[3], jobId)
 return jobId
 LUA;
 
-        $client->eval($script, 3, $this->toKey("id"), $this->toKey("jobs"), $this->toKey("waiting"), null, $data);
+        $res = $client->eval($addJobLuaScript, 3, $this->toKey("id"), $this->toKey("jobs"), $this->toKey("waiting"), null, $this->getReadyPayload($data, $options));
+
+        if ($res === null) {
+            return null;
+        } else {
+            return (int) $res;
+        }
     }
 
     /**
@@ -97,6 +104,43 @@ LUA;
      */
     private function toKey($str)
     {
-        return $this->settings['keyPrefix'] . ":" . $str;
+        return $this->settings['keyPrefix'] . $str;
+    }
+
+    /**
+     * getReadyPayload
+     *
+     * @param  array $data
+     * @param  array $options
+     *
+     * @return void
+     */
+    private function getReadyPayload(array $data, array $options)
+    {
+        $readyOptions = [
+            'timestamp' => $this->getCurTsMs(),
+            'stacktraces' => [],
+            'timeout' => $options['timeout'] ?? $this->defaults['stallInterval'],
+            'retries' => $options['timeout'] ?? 0,
+        ];
+
+        return json_encode([
+            'data' => $data,
+            'options' => $readyOptions,
+            'status' => 'created',
+        ]);
+    }
+
+    /**
+     * getCurTsMs
+     *
+     * @return void
+     */
+    //TODO: move it to helpers
+    private function getCurTsMs()
+    {
+        list($msec, $sec) = explode(' ', microtime());
+
+        return $sec . substr($msec, 2, 6);
     }
 }
