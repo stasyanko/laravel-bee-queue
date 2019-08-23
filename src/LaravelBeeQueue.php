@@ -2,7 +2,6 @@
 
 namespace Stasyanko\LaravelBeeQueue;
 
-use Stasyanko\LaravelBeeQueue\Lua\AddJob;
 use Predis\Client;
 
 class LaravelBeeQueue implements LaravelBeeQueueInterface
@@ -36,6 +35,14 @@ class LaravelBeeQueue implements LaravelBeeQueueInterface
         ]
     ];
 
+    /**
+     * __construct
+     *
+     * @param  string $queueName
+     * @param  array $settings
+     *
+     * @return void
+     */
     public function __construct(string $queueName, array $settings = [])
     {
         $this->queueName = $queueName;
@@ -47,7 +54,15 @@ class LaravelBeeQueue implements LaravelBeeQueueInterface
         ];
     }
 
-    public function createJob(string $data, array $settings = [])
+    /**
+     * createJob
+     *
+     * @param  string $data json data 
+     * @param  array $options
+     *
+     * @return void
+     */
+    public function createJob(string $data, array $options = [])
     {
         $client = new Client();
         $script = <<<'LUA'
@@ -69,15 +84,19 @@ redis.call("lpush", KEYS[3], jobId)
 
 return jobId
 LUA;
-        $addJobObj = new AddJob();
-        // $client->getProfile()->defineCommand('addJob', 'AddJob');
-        $response = $client->eval($script, 3, 1.2, 1.5, 1.1, 1, '{"1":1}');
 
-        dd($response);
+        $client->eval($script, 3, $this->toKey("id"), $this->toKey("jobs"), $this->toKey("waiting"), null, $data);
     }
 
+    /**
+     * toKey
+     *
+     * @param  string $str
+     *
+     * @return void
+     */
     private function toKey($str)
     {
-        return $this->settings['keyPrefix'] . $str;
+        return $this->settings['keyPrefix'] . ":" . $str;
     }
 }
