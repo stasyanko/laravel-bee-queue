@@ -121,7 +121,7 @@ LUA;
             'timestamp' => $this->getCurTsMs(),
             'stacktraces' => [],
             'timeout' => $options['timeout'] ?? $this->defaults['stallInterval'],
-            'retries' => $options['timeout'] ?? 0,
+            'retries' => $options['retries'] ?? 0,
         ];
 
         return json_encode([
