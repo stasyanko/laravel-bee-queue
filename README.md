@@ -10,6 +10,19 @@ The package allows to create jobs for bee-queue from laravel with two lines of c
 
 The package is under development now and **IS NOT READY** for production!
 
+#### Installation 
+
+`composer require stasyanko/laravel-bee-queue`
+
+For laravel <= 5.4:
+
+Add in config/app.php to 'providers' section:
+
+`Stasyanko\LaravelBeeQueue\LaravelBeeQueueServiceProvider::class
+`
+
+In order to be able to change redis settings run `php artisan vendor:publish` and set your redis credentials if they are not equal to default .env laravel keys.
+
 ####  TODO:
 
 - write tests
