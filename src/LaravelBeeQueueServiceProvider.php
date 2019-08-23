@@ -17,6 +17,10 @@ class LaravelBeeQueueServiceProvider extends ServiceProvider
         $this->app->bind(Client::class, function () {
             return new Client();
         });
+        $this->mergeConfigFrom(
+            __DIR__ . '/../config/laravel_bee_queue.php',
+            'laravel_bee_queue'
+        );
     }
 
     /**
@@ -26,6 +30,8 @@ class LaravelBeeQueueServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $this->publishes([
+            __DIR__ . '/../config/laravel_bee_queue.php' => config_path('laravel_bee_queue.php'),
+        ], 'laravel-bee-queue-config');
     }
 }

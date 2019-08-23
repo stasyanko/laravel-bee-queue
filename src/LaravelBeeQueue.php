@@ -48,7 +48,6 @@ class LaravelBeeQueue implements LaravelBeeQueueInterface
         $this->queueName = $queueName;
 
         $this->settings = [
-            'redis' => $settings['redis'] ?? $this->defaults['redis'],
             'quitCommandClient' => true,
             'keyPrefix' => $settings['prefix'] ?? $this->defaults['prefix'] . ':' . $queueName . ':',
         ];
@@ -64,7 +63,7 @@ class LaravelBeeQueue implements LaravelBeeQueueInterface
      */
     public function createJob(array $data, array $options = [])
     {
-        $client = new Client();
+        $client = new Client(config('laravel_bee_queue.redis'));
         //TODO: move to external method or class
         $addJobLuaScript = <<<'LUA'
 --[[
